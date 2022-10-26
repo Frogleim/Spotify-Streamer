@@ -21,6 +21,7 @@ def change_password(email, password):
 
     email_input = driver.find_element(By.XPATH, '//*[@id="login-username"]')
     email_input.send_keys(email)
+    time.sleep(1)
 
     password_input = driver.find_element(By.XPATH, '//*[@id="login-password"]')
     password_input.send_keys(password)
@@ -60,8 +61,11 @@ def change_password(email, password):
 
 
 if __name__ == '__main__':
-    file = open(r'./data.json')
+    file = open(r'./data1.json')
     data = json.load(file)
-
+    num = 0
     for items in data['users']:
         change_password(items['email'], items['password'])
+        time.sleep(1)
+        num += 1
+        print(f'{num} account with changes password')

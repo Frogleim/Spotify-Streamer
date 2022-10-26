@@ -38,7 +38,6 @@ class Main:
         self.alphabet = string.ascii_letters + string.digits
         self.settitle(script_title)
         self.clear(script_info)
-        self.email = names.get_full_name().replace(' ', '').lower() + f'{random.randint(100, 200)}@gmail.com'
         self.password = '077108803GBH'
         self.birth_year = random.randint(1990, 2002)
         self.birth_month = random.randint(1, 12)
@@ -56,7 +55,7 @@ class Main:
         username = string.ascii_letters + string.digits
         username = ''.join(random.choice(username) for i in range(random.randint(7, 11)))
         credentails['username'] = username
-        credentails['email'] = self.email
+        credentails['email'] = names.get_full_name().replace(' ', '').lower() + f'{random.randint(100, 200)}@gmail.com'
         print(f'Email: {credentails["email"]}')
         print(f'Password: {credentails["password"]}')
 
@@ -111,7 +110,7 @@ class Main:
             # self.credentails_data.append(credentails)
             # pd.DataFrame(self.credentails_data).to_csv('data.csv', mode='a')
             self.credentails_data.append(credentails)
-            with open('data.json', 'r+') as savefile:
+            with open('data1.json', 'r+') as savefile:
                 file_data = json.load(savefile)
                 file_data['users'].append(credentails)
                 savefile.seek(0)
@@ -126,4 +125,9 @@ class Main:
 
 if __name__ == "__main__":
     main = Main()
-    main.creator()
+    num = 0
+    for i in range(50):
+        main.creator()
+        num += 1
+        print(f'{num} account')
+        time.sleep(2)
