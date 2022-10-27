@@ -96,38 +96,35 @@ class Main:
                                proxies=proxies)
 
             print(req.status_code)
-            # if "login_token" in req.text:
-            #     token = req.json()['login_token']
-            #     credentails['login token'] = token
-            #     self.settitle(script_title)
-            #     self.clear(script_info)
             print(
                 '[>] ACCOUNT CREATED SUCCESSFULLY\n[-] Email:{0}\n[-] Password:{1}\n[-] Username:{2}\n[-] '
                 'Gender:{3}\n[-] Birth year:{4}\n[-] Birth month:{5}\n[-] Birth day:{6}\n'.format(
                     credentails['email'], credentails['password'], credentails['username'], credentails['gender'],
                     credentails['birth_year'], credentails['birth_month'], credentails['birth_day']))
             #
-            # self.credentails_data.append(credentails)
-            # pd.DataFrame(self.credentails_data).to_csv('data.csv', mode='a')
             self.credentails_data.append(credentails)
-            with open('data1.json', 'r+') as savefile:
-                file_data = json.load(savefile)
-                file_data['users'].append(credentails)
-                savefile.seek(0)
-                json.dump(file_data, savefile, indent=7)
             return self.credentails_data
 
-            # else:
-            #     print("[>] ERROR")
         except Exception as e:
             print(e)
+
+    def run(self):
+        while True:
+            count = 0
+            for i in range(50):
+                credentails = self.creator()
+                time.sleep(2)
+                count += 1
+                with open(f'data_{count}.json', 'r+') as savefile:
+                    file_data = json.load(savefile)
+                    file_data['users'].append(credentails)
+                    savefile.seek(0)
+                    json.dump(file_data, savefile, indent=7)
+
+                print(f'{count} account')
+            time.sleep(3600*5)
 
 
 if __name__ == "__main__":
     main = Main()
-    num = 0
-    for i in range(50):
-        main.creator()
-        num += 1
-        print(f'{num} account')
-        time.sleep(2)
+    main.run()

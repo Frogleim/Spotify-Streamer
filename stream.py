@@ -17,7 +17,7 @@ def run_browser():
     return driver
 
 
-def start_streaming(email, password):
+def start_streaming(email, password, playlist):
     url = 'https://accounts.spotify.com/en/login'
     driver = run_browser()
     driver.get(url)
@@ -29,8 +29,7 @@ def start_streaming(email, password):
 
     driver.find_element(By.XPATH, '//*[@id="login-button"]').click()
     time.sleep(5)
-    play = 'https://open.spotify.com/playlist/5Bq88EhpWZCSnkoIdaqAMD?si=xvBK4MzaRl-1T4KeXyqv1Q'
-    driver.get(play)
+    driver.get(playlist)
 
     time.sleep(2)
     keyboard = Controller()
@@ -47,8 +46,11 @@ def start_streaming(email, password):
 
 
 if __name__ == '__main__':
-
+    start_time = time.time()
     file = open(r'./client_credentials_final.json')
     data = json.load(file)
+    file = open(r'./playlist.json.json')
+    songs = json.load(file)
     for items in data['users']:
-        start_streaming(items['email'], items['password'])
+        for playlist in songs['playlist']:
+            start_streaming(items['email'], items['password'], playlist)

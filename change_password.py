@@ -1,5 +1,6 @@
 import time
 from selenium import webdriver
+from create_account import Main
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import json
@@ -15,6 +16,7 @@ def install_driver():
 
 
 def change_password(email, password):
+    print(f'___Accounts created successfully___')
     url = 'https://accounts.spotify.com/en/login'
     driver = install_driver()
     driver.get(url)
