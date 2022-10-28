@@ -6,7 +6,7 @@ import names
 import os
 import secrets
 import string
-from change_password import run
+from change_password import ChangePassword
 
 
 script_version = "1.0"
@@ -125,7 +125,8 @@ class Main:
 
                 print(f'{count} account')
             print(f'___Accounts created successfully___')
-            run()
+            change = ChangePassword()
+            change.run()
             time.sleep(3600*5)
 
 
