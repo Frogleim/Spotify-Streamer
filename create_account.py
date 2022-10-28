@@ -1,12 +1,13 @@
 import json
 import time
-import pandas as pd
 import requests
 import random
 import names
 import os
 import secrets
 import string
+from change_password import run
+
 
 script_version = "1.0"
 script_title = "Spotify Account Creator and Streamer By Frogleim"
@@ -102,26 +103,29 @@ class Main:
                     credentails['email'], credentails['password'], credentails['username'], credentails['gender'],
                     credentails['birth_year'], credentails['birth_month'], credentails['birth_day']))
             #
-            self.credentails_data.append(credentails)
-            return self.credentails_data
+            # self.credentails_data.append(credentails)
+            return credentails
 
         except Exception as e:
             print(e)
 
     def run(self):
+
         while True:
             count = 0
-            for i in range(50):
+            for i in range(5):
                 credentails = self.creator()
                 time.sleep(2)
                 count += 1
-                with open(f'data_{count}.json', 'r+') as savefile:
+                with open(f'users/data_1.json', 'r+') as savefile:
                     file_data = json.load(savefile)
                     file_data['users'].append(credentails)
                     savefile.seek(0)
                     json.dump(file_data, savefile, indent=7)
 
                 print(f'{count} account')
+            print(f'___Accounts created successfully___')
+            run()
             time.sleep(3600*5)
 
 

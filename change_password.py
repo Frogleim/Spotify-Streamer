@@ -8,7 +8,7 @@ import json
 
 def install_driver():
     op = webdriver.ChromeOptions()
-    # op.add_argument('headless')
+    op.add_argument('headless')
     op.add_experimental_option('detach', True)
     path = ChromeDriverManager().install()
     driver = webdriver.Chrome(path, chrome_options=op)
@@ -16,7 +16,6 @@ def install_driver():
 
 
 def change_password(email, password):
-    print(f'___Accounts created successfully___')
     url = 'https://accounts.spotify.com/en/login'
     driver = install_driver()
     driver.get(url)
@@ -54,7 +53,7 @@ def change_password(email, password):
         'password': new_passwords
 
     }
-    with open('client_credentials_final.json', 'r+') as savefile:
+    with open('./users/client_credentials_final.json', 'r+') as savefile:
         file_data = json.load(savefile)
         file_data['users'].append(data)
         savefile.seek(0)
@@ -62,8 +61,8 @@ def change_password(email, password):
     driver.close()
 
 
-if __name__ == '__main__':
-    file = open(r'./data1.json')
+def run():
+    file = open(r'./users/data_1.json')
     data = json.load(file)
     num = 0
     for items in data['users']:
@@ -71,3 +70,7 @@ if __name__ == '__main__':
         time.sleep(1)
         num += 1
         print(f'{num} account with changes password')
+
+
+if __name__ == '__main__':
+    run()
