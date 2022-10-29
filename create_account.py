@@ -6,7 +6,6 @@ import names
 import os
 import secrets
 import string
-from change_password import ChangePassword
 
 
 script_version = "1.0"
@@ -113,7 +112,7 @@ class Main:
 
         while True:
             count = 0
-            for i in range(5):
+            for i in range(50):
                 credentails = self.creator()
                 time.sleep(2)
                 count += 1
@@ -125,7 +124,6 @@ class Main:
 
                 print(f'{count} account')
             print(f'___Accounts created successfully___')
-            change = ChangePassword()
             change.run()
             time.sleep(3600*5)
 

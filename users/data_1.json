@@ -1,41 +1,8 @@
 {
        "users": [
 
-              {
-                     "gender": "female",
-                     "birth_year": 1994,
-                     "birth_month": 6,
-                     "birth_day": 26,
-                     "password": "077108803GBH",
-                     "username": "0eMI9D1IfD",
-                     "email": "traviscarson173@gmail.com"
-              },
-              {
-                     "gender": "female",
-                     "birth_year": 1994,
-                     "birth_month": 6,
-                     "birth_day": 26,
-                     "password": "077108803GBH",
-                     "username": "9NDGhdSu",
-                     "email": "tammykeane111@gmail.com"
-              },
-              {
-                     "gender": "female",
-                     "birth_year": 1994,
-                     "birth_month": 6,
-                     "birth_day": 26,
-                     "password": "077108803GBH",
-                     "username": "7rJOcRP",
-                     "email": "pamelalewis196@gmail.com"
-              },
-              {
-                     "gender": "female",
-                     "birth_year": 1994,
-                     "birth_month": 6,
-                     "birth_day": 26,
-                     "password": "077108803GBH",
-                     "username": "Kkd9EpZ",
-                     "email": "davidfinnegan165@gmail.com"
-              }
+
+
+
        ]
 }
