@@ -45,6 +45,7 @@ class Main:
         self.gender = random.choice(['male', 'female'])
 
     def gen_credentails_method(self):
+
         self.credentails_data = []
         credentails = {}
         credentails['gender'] = self.gender
@@ -65,7 +66,6 @@ class Main:
 
         try:
             session = requests.Session()
-
             headers = {
                 "Accept": "*/*",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -76,7 +76,6 @@ class Main:
                 "accept-language": "en",
                 "Host": "spclient.wg.spotify.com"
             }
-
             credentails = self.gen_credentails_method()
             data = 'birth_day={0}&birth_month={1}&birth_year={2}&collect_personal_info' \
                    '=undefined&creation_flow=&creation_point=https:' \
@@ -94,17 +93,13 @@ class Main:
             }
             req = session.post("https://spclient.wg.spotify.com/signup/public/v1/account", headers=headers, data=data,
                                proxies=proxies)
-
             print(req.status_code)
             print(
                 '[>] ACCOUNT CREATED SUCCESSFULLY\n[-] Email:{0}\n[-] Password:{1}\n[-] Username:{2}\n[-] '
                 'Gender:{3}\n[-] Birth year:{4}\n[-] Birth month:{5}\n[-] Birth day:{6}\n'.format(
                     credentails['email'], credentails['password'], credentails['username'], credentails['gender'],
                     credentails['birth_year'], credentails['birth_month'], credentails['birth_day']))
-            #
-            # self.credentails_data.append(credentails)
             return credentails
-
         except Exception as e:
             print(e)
 
@@ -121,11 +116,9 @@ class Main:
                     file_data['users'].append(credentails)
                     savefile.seek(0)
                     json.dump(file_data, savefile, indent=7)
-
                 print(f'{count} account')
             print(f'___Accounts created successfully___')
-            change.run()
-            time.sleep(3600*5)
+            time.sleep(3600)
 
 
 if __name__ == "__main__":
