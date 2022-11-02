@@ -108,7 +108,7 @@ class Main:
 
         while True:
             count = 0  # remove old accounts
-            file = open('./users/data_1.json', 'r+')
+            file = open('./users/users.json', 'r+')
             file.seek(0)
             file.truncate()
             data_dict = {"users": []}
@@ -116,7 +116,7 @@ class Main:
                 json.dump(data_dict, update_file)
             for _ in range(2):
                 credentails = self.creator()
-                time.sleep(50)
+                time.sleep(1)
                 count += 1
                 with open(f'users/users.json', 'r+') as savefile:
                     file_data = json.load(savefile)

@@ -1,1 +1,22 @@
-{"users": []}
+{
+       "users": [
+              {
+                     "gender": "female",
+                     "birth_year": 1991,
+                     "birth_month": 6,
+                     "birth_day": 15,
+                     "password": "077108803GBH",
+                     "username": "ZihHDkk",
+                     "email": "barbaramunoz176@gmail.com"
+              },
+              {
+                     "gender": "female",
+                     "birth_year": 1991,
+                     "birth_month": 6,
+                     "birth_day": 15,
+                     "password": "077108803GBH",
+                     "username": "9SIkrD8I5",
+                     "email": "adriennedorschner112@gmail.com"
+              }
+       ]
+}

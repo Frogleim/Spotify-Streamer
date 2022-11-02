@@ -78,7 +78,7 @@ def run():
             print('Sored successfully')
         except Exception as e:
             print(f'Failed to store data {e}')
-        time.sleep(2 * 3600)
+        time.sleep(3600)
 
 
 if __name__ == '__main__':
