@@ -7,7 +7,6 @@ import os
 import secrets
 import string
 
-
 script_version = "1.0"
 script_title = "Spotify Account Creator and Streamer By Frogleim"
 script_info = f'''
@@ -43,6 +42,7 @@ class Main:
         self.birth_month = random.randint(1, 12)
         self.birth_day = random.randint(1, 28)
         self.gender = random.choice(['male', 'female'])
+        self.account_list = []
 
     def gen_credentails_method(self):
 
@@ -99,26 +99,26 @@ class Main:
                 'Gender:{3}\n[-] Birth year:{4}\n[-] Birth month:{5}\n[-] Birth day:{6}\n'.format(
                     credentails['email'], credentails['password'], credentails['username'], credentails['gender'],
                     credentails['birth_year'], credentails['birth_month'], credentails['birth_day']))
-            return credentails
+            self.account_list.append(credentails)
+            return self.account_list
         except Exception as e:
             print(e)
 
     def run(self):
-
-        while True:
-            count = 0
-            for i in range(50):
-                credentails = self.creator()
-                time.sleep(2)
-                count += 1
-                with open(f'users/data_1.json', 'r+') as savefile:
-                    file_data = json.load(savefile)
-                    file_data['users'].append(credentails)
-                    savefile.seek(0)
-                    json.dump(file_data, savefile, indent=7)
-                print(f'{count} account')
-            print(f'___Accounts created successfully___')
-            time.sleep(3600)
+        credentails = None
+        count = 0
+        for i in range(5):
+            credentails = self.creator()
+            time.sleep(2)
+            count += 1
+            with open(f'users/data_1.json', 'r+') as savefile:
+                file_data = json.load(savefile)
+                file_data['users'].append(credentails)
+                savefile.seek(0)
+                json.dump(file_data, savefile, indent=7)
+            print(f'{count} account')
+        print(f'___Accounts created successfully___')
+        return credentails
 
 
 if __name__ == "__main__":
