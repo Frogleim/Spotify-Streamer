@@ -6,6 +6,10 @@ import names
 import os
 import secrets
 import string
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+import time
+from selenium.webdriver.support.ui import Select
 
 script_version = "1.0"
 script_title = "Spotify Account Creator and Streamer By Frogleim"
@@ -33,7 +37,6 @@ class Main:
         os.system("title {0}".format(title_name))
 
     def __init__(self):
-
         self.alphabet = string.ascii_letters + string.digits
         self.settitle(script_title)
         self.clear(script_info)
@@ -45,7 +48,6 @@ class Main:
         self.account_list = []
 
     def gen_credentails_method(self):
-
         self.credentails_data = []
         credentails = {}
         credentails['gender'] = self.gender
@@ -63,59 +65,60 @@ class Main:
         return credentails
 
     def creator(self):
-
+        credentails = self.gen_credentails_method()
+        driver = uc.Chrome()
+        driver.get('https://www.spotify.com/us/signup?forward_url=https%3A%2F%2Fopen.spotify.com%2F')
+        time.sleep(2.5)
+        email = driver.find_element(By.XPATH, "email")
+        email.send_keys(credentails['email'])
+        time.sleep(0.5)
         try:
-            session = requests.Session()
-            headers = {
-                "Accept": "*/*",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/86.0.4280.141 Safari/537.36",
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Referer": "https://www.spotify.com/",
-                "Accept-Encoding": "gzip, deflate, br",
-                "accept-language": "en",
-                "Host": "spclient.wg.spotify.com"
-            }
-            credentails = self.gen_credentails_method()
-            data = 'birth_day={0}&birth_month={1}&birth_year={2}&collect_personal_info' \
-                   '=undefined&creation_flow=&creation_point=https:' \
-                   '//www.spotify.com/uk/&displayname={3}&email={4}&gender={5}&iagree=1' \
-                   '&key=a1e486e2729f46d6bb368d6b2bcda326&password={6}&password_repeat={7}&' \
-                   'platform=www&referrer=&send-email=1&thirdpartyemail=0&fb=0'.format(
-                credentails['birth_day'], credentails['birth_month'], credentails['birth_year'],
-                credentails['username'], credentails['email'], credentails['gender'], credentails['password'],
-                credentails['password'])
-            proxies = {
-                'http://':
-                    'uncutgems : dasherZ1',
-                'https://':
-                    'uncutgems: dasherZ1'
-            }
-            req = session.post("https://spclient.wg.spotify.com/signup/public/v1/account", headers=headers, data=data,
-                               proxies=proxies)
-            print(req.status_code)
-            print(
-                '[>] ACCOUNT CREATED SUCCESSFULLY\n[-] Email:{0}\n[-] Password:{1}\n[-] Username:{2}\n[-] '
-                'Gender:{3}\n[-] Birth year:{4}\n[-] Birth month:{5}\n[-] Birth day:{6}\n'.format(
-                    credentails['email'], credentails['password'], credentails['username'], credentails['gender'],
-                    credentails['birth_year'], credentails['birth_month'], credentails['birth_day']))
-            self.account_list.append(credentails)
-            return self.account_list
-        except Exception as e:
-            print(e)
+            re_email = driver.find_element(By.ID, "confirm")
+
+            re_email.send_keys(credentails['email'])
+        except Exception:
+            print("Re-email Passed...")
+        time.sleep(0.5)
+        password = driver.find_element(By.ID, "password")
+        password.send_keys(credentails['password'])
+        time.sleep(0.7)
+        username = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[4]/input")
+        username.send_keys(credentails['username'])
+        time.sleep(0.8)
+        drop_months = driver.find_element(By.XPATH,
+                                          "/html/body/div[1]/main/div/div/form/div[5]/div[2]/div[1]/div/div[2]/select")
+        select_months = Select(drop_months)
+        select_months.select_by_visible_text("Ocak")
+        time.sleep(1)
+        day = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div[2]/div[2]/div/input")
+        day.send_keys("22")
+        time.sleep(0.6)
+        year = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div[2]/div[3]/div/input")
+        year.send_keys("1995")
+        time.sleep(0.5)
+        female = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/fieldset/div/div[2]/label/span[1]")
+        female.click()
+        time.sleep(0.2)
+        aggrements = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[6]/div/label/span[1]")
+        aggrements.click()
+        time.sleep(0.36)
+        login = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/div[7]/div/button/span[1]')
+        login.click()
+        return credentails
 
     def run(self):
         credentails = None
         count = 0
-        for i in range(5):
+        for i in range(1):
             credentails = self.creator()
             time.sleep(2)
             count += 1
-            with open(f'users/data_1.json', 'r+') as savefile:
-                file_data = json.load(savefile)
-                file_data['users'].append(credentails)
-                savefile.seek(0)
-                json.dump(file_data, savefile, indent=7)
+            with open(f'users/data_1.json', 'w') as savefile:
+                json.dump(credentails, savefile)
+                # file_data = json.load(savefile)
+                # file_data['users'].append(credentails)
+                # savefile.seek(0)
+                # json.dump(file_data, savefile, indent=7)
             print(f'{count} account')
         print(f'___Accounts created successfully___')
         return credentails

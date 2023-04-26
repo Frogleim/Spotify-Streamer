@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-# from change_password import change_password
+from change_password import run
 # from stream import start_streaming
 from create_account import Main
 
@@ -14,9 +14,10 @@ async def create_account():
         "Accounts": res
     }
 
+
 @app.get('/api/sing_up')
 async def sign_up():
-    final_data = change_password()
+    final_data = run()
     return {'Message': final_data}
 
 

@@ -2,13 +2,13 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from firebase_db import store_data
+# from firebase_db import store_data
 import json
 
 
 def install_driver():
     op = webdriver.ChromeOptions()
-    op.add_argument('headless')
+    # op.add_argument('headless')
     op.add_experimental_option('detach', True)
     path = ChromeDriverManager().install()
     driver = webdriver.Chrome(path, chrome_options=op)
@@ -52,33 +52,26 @@ def change_passwords(email, password):
             'password': new_passwords
 
         }
-        with open('./users/client_credentials_final.json', 'r+') as savefile:
-            file_data = json.load(savefile)
-            file_data['users'].append(data)
-            savefile.seek(0)
-            json.dump(file_data, savefile, indent=7)
+        with open('updated_data.json', 'w') as f:
+            # write the data to the file in JSON format
+            json.dump(data, f)
         driver.close()
     except Exception as e:
         print(f'Failed to change password! Error message is: {e}')
 
 
 def run():
-    while True:
-        file = open(r'./users/data_1.json')
-        data = json.load(file)
-        num = 0
-        for items in data['users']:
-            change_passwords(items['email'], items['password'])
-            time.sleep(1)
-            num += 1
-            print(f'{num} account with changes password')
-        try:
-            print('Storing in Firebase.....')
-            store_data()
-            print('Sored successfully')
-        except Exception as e:
-            print(f'Failed to store data {e}')
-        time.sleep(2 * 3600)
+    # while True:
+    file = open(r'./users/data_1.json')
+    data = json.load(file)
+    num = 0
+    for items in data:
+        change_passwords(items['email'], items['password'])
+        time.sleep(1)
+        num += 1
+        print(f'{num} account with changes password')
+
+        # time.sleep(2 * 3600)
 
 
 if __name__ == '__main__':
