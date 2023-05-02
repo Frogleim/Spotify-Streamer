@@ -69,7 +69,7 @@ class Main:
         driver = uc.Chrome()
         driver.get('https://www.spotify.com/us/signup?forward_url=https%3A%2F%2Fopen.spotify.com%2F')
         time.sleep(2.5)
-        email = driver.find_element(By.XPATH, "email")
+        email = driver.find_element(By.ID, "email")
         email.send_keys(credentails['email'])
         time.sleep(0.5)
         try:

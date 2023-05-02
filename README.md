@@ -8,11 +8,18 @@ Spotify streamer for 24/7 streaming also included accounts generation
 Python 3.8 or upper
 ```
 
-#Install
+## Installation 
 
-- Make sure that ```data_1.json``` and ```client_credential_final.json```  is empty 
-- Put your playlist urls in ```playlist.json```
-- Run ``` create_account.py``` it will generate 50 random accounts every 2 hours
-- After that run ```stream.py``` for 24/7 streaming(included playlist like)
+- install necessary libraries with command `pip install -r requirements.txt`  
+- run `uvicorn` server with using `uvicorn main:app --reload`
+
+## Endpoints
+Currently there are available  only `create_account` endpoint, which generate `spotify` accounts with fake email address  
+
+
+
+
+
+![Screenshot (9)](https://user-images.githubusercontent.com/92037197/235632304-22bfd821-ffa0-4902-85be-f636dd030844.png)
 
 
