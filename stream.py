@@ -51,7 +51,7 @@ def run():
         password = data["password"]
     with open("./playlist.json", "r") as playlist_file:
         playlist_data = json.load(playlist_file)
-        playlist_url = "https://open.spotify.com/playlist/4lvalcAu0XGMyzPra6xwxb?si=4039bbf69f2a4e2c"
+        playlist_url = playlist_data["playlist"][0]['song']
     start_streaming(email, password, playlist_url)
 
 
