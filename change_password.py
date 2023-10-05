@@ -1,23 +1,12 @@
 import time
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
-# from firebase_db import store_data
 import json
-
-
-def install_driver():
-    op = webdriver.ChromeOptions()
-    # op.add_argument('headless')
-    op.add_experimental_option('detach', True)
-    path = ChromeDriverManager().install()
-    driver = webdriver.Chrome(path, chrome_options=op)
-    return driver
+from core import create_driver
 
 
 def change_passwords(email, password):
     url = 'https://accounts.spotify.com/en/login'
-    driver = install_driver()
+    driver = create_driver.create_firefox_driver()
     driver.get(url)
     try:
         email_input = driver.find_element(By.XPATH, '//*[@id="login-username"]')
@@ -28,8 +17,8 @@ def change_passwords(email, password):
         driver.find_element(By.XPATH, '//*[@id="login-button"]').click()
         time.sleep(5)
         print('Login successfully')
-        driver.find_element(By.XPATH, '//*[@id="account-settings-link"]/div[1]/p').click()
-        time.sleep(3)
+        # driver.find_element(By.XPATH, '//*[@id="account-settings-link"]/div[1]/p').click()
+        # time.sleep(3)
         change_password_url = 'https://www.spotify.com/am/account/change-password/'
         driver.get(change_password_url)
         time.sleep(3)
@@ -44,7 +33,7 @@ def change_passwords(email, password):
         repeat_new_password.send_keys(new_passwords)
         time.sleep(1)
         driver.find_element(By.XPATH,
-                            '//*[@id="__next"]/div/div/div[2]/div[2]/div[2]/div/article/section/form/div[4]/button') \
+                            '/html/body/div[1]/div[1]/div/div[2]/div[2]/article/section/form/div[4]/button/span[1]') \
             .click()
         print(f'Change successfully. New password is {new_passwords} for user {email} ')
         data = {
@@ -52,7 +41,7 @@ def change_passwords(email, password):
             'password': new_passwords
 
         }
-        with open('updated_data.json', 'w') as f:
+        with open('./users/updated_data.json', 'w') as f:
             # write the data to the file in JSON format
             json.dump(data, f)
         driver.close()
@@ -65,13 +54,11 @@ def run():
     file = open(r'./users/data_1.json')
     data = json.load(file)
     num = 0
-    for items in data:
-        change_passwords(items['email'], items['password'])
-        time.sleep(1)
-        num += 1
-        print(f'{num} account with changes password')
+    change_passwords(data['email'], data['password'])
+    time.sleep(1)
+    num += 1
+    print(f'{num} account with changes password')
 
-        # time.sleep(2 * 3600)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,19 @@
+Metadata-Version: 2.0
+Name: hostsman
+Version: 1.1.5
+Summary: A tool to manage hosts file
+Home-page: https://github.com/qszhuan/hostsman
+Author: Qingshan Zhuan
+Author-email: zhuanqingshan@gmail.com
+License: MIT
+Description-Content-Type: UNKNOWN
+Requires-Dist: Pygments
+Requires-Dist: colorama
+Provides-Extra: dev
+Requires-Dist: check-manifest; extra == 'dev'
+Provides-Extra: test
+Requires-Dist: coverage; extra == 'test'
+
+|Build Status|
+
+

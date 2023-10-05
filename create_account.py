@@ -1,10 +1,7 @@
 import json
-import time
-import requests
 import random
 import names
 import os
-import secrets
 import string
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
@@ -37,6 +34,7 @@ class Main:
         os.system("title {0}".format(title_name))
 
     def __init__(self):
+        self.credentails_data = None
         self.alphabet = string.ascii_letters + string.digits
         self.settitle(script_title)
         self.clear(script_info)
@@ -48,80 +46,78 @@ class Main:
         self.account_list = []
 
     def gen_credentails_method(self):
-        self.credentails_data = []
-        credentails = {}
-        credentails['gender'] = self.gender
-        credentails['birth_year'] = self.birth_year
-        credentails['birth_month'] = self.birth_month
-        credentails['birth_day'] = self.birth_day
-        credentails['password'] = self.password
+        credentials = {'gender': self.gender, 'birth_year': self.birth_year, 'birth_month': self.birth_month,
+                       'birth_day': self.birth_day, 'password': self.password}
         username = string.ascii_letters + string.digits
         username = ''.join(random.choice(username) for i in range(random.randint(7, 11)))
-        credentails['username'] = username
-        credentails['email'] = names.get_full_name().replace(' ', '').lower() + f'{random.randint(100, 200)}@gmail.com'
-        print(f'Email: {credentails["email"]}')
-        print(f'Password: {credentails["password"]}')
+        credentials['username'] = username
+        credentials['email'] = names.get_full_name().replace(' ', '').lower() + f'{random.randint(100, 200)}@gmail.com'
 
-        return credentails
+        # Append the generated credentials to the account_list
+        self.account_list.append(credentials)
+
+        print(f'Email: {credentials["email"]}')
+        print(f'Password: {credentials["password"]}')
+
+        return credentials
 
     def creator(self):
-        credentails = self.gen_credentails_method()
-        driver = uc.Chrome()
+        credentials = self.gen_credentails_method()
+        options = uc.ChromeOptions()
+        options.arguments.extend(["--no-sandbox", "--disable-setuid-sandbox"])
+        driver = uc.Chrome(options, use_subprocess=True)
         driver.get('https://www.spotify.com/us/signup?forward_url=https%3A%2F%2Fopen.spotify.com%2F')
         time.sleep(2.5)
         email = driver.find_element(By.ID, "email")
-        email.send_keys(credentails['email'])
+        email.send_keys(credentials['email'])
         time.sleep(0.5)
         try:
             re_email = driver.find_element(By.ID, "confirm")
 
-            re_email.send_keys(credentails['email'])
+            re_email.send_keys(credentials['email'])
         except Exception:
             print("Re-email Passed...")
         time.sleep(0.5)
         password = driver.find_element(By.ID, "password")
-        password.send_keys(credentails['password'])
+        password.send_keys(credentials['password'])
         time.sleep(0.7)
-        username = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[4]/input")
-        username.send_keys(credentails['username'])
+        username = driver.find_element(By.XPATH, '//*[@id="displayname"]')
+        username.send_keys(credentials['username'])
+        time.sleep(0.9)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(0.8)
         drop_months = driver.find_element(By.XPATH,
-                                          "/html/body/div[1]/main/div/div/form/div[5]/div[2]/div[1]/div/div[2]/select")
+                                          '//*[@id="month"]')
         select_months = Select(drop_months)
-        select_months.select_by_visible_text("Ocak")
+        select_months.select_by_visible_text("Июнь" or "June")
         time.sleep(1)
-        day = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div[2]/div[2]/div/input")
+        day = driver.find_element(By.XPATH, '//*[@id="day"]')
         day.send_keys("22")
         time.sleep(0.6)
-        year = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div[2]/div[3]/div/input")
+        year = driver.find_element(By.XPATH, '//*[@id="year"]')
         year.send_keys("1995")
         time.sleep(0.5)
-        female = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/fieldset/div/div[2]/label/span[1]")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(0.68)
+        female = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/fieldset/div/div[2]/label/span[1]')
         female.click()
         time.sleep(0.2)
-        aggrements = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[6]/div/label/span[1]")
-        aggrements.click()
+        agreements = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div/label/span[1]")
+        agreements.click()
         time.sleep(0.36)
-        login = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/div[7]/div/button/span[1]')
+        login = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/div[6]/div/button/span[1]')
         login.click()
-        return credentails
+        return credentials
 
     def run(self):
-        credentails = None
-        count = 0
-        for i in range(1):
-            credentails = self.creator()
+        for i in range(2):
+            credentials = self.creator()
             time.sleep(2)
-            count += 1
-            with open(f'users/data_1.json', 'w') as savefile:
-                json.dump(credentails, savefile)
-                # file_data = json.load(savefile)
-                # file_data['users'].append(credentails)
-                # savefile.seek(0)
-                # json.dump(file_data, savefile, indent=7)
-            print(f'{count} account')
+            with open(f'users/accounts.json', 'w') as savefile:
+                # Save the entire account_list to the JSON file
+                json.dump(self.account_list, savefile, indent=4)
+            print(f'{len(self.account_list)} accounts created')
         print(f'___Accounts created successfully___')
-        return credentails
 
 
 if __name__ == "__main__":
