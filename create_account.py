@@ -7,6 +7,7 @@ import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 import time
 from selenium.webdriver.support.ui import Select
+from core import postgres_connect
 
 script_version = "1.0"
 script_title = "Spotify Account Creator and Streamer By Frogleim"
@@ -63,63 +64,69 @@ class Main:
 
     def creator(self):
         credentials = self.gen_credentails_method()
-        options = uc.ChromeOptions()
-        options.arguments.extend(["--no-sandbox", "--disable-setuid-sandbox"])
-        driver = uc.Chrome(options, use_subprocess=True)
-        driver.get('https://www.spotify.com/us/signup?forward_url=https%3A%2F%2Fopen.spotify.com%2F')
-        time.sleep(2.5)
+
+        driver = uc.Chrome()
+
+        driver.get('https://www.spotify.com/us/signup?flow_id=c9d573b3-b1da-4c29-88c4-e0f8e9c25d63%3A1696803002&forward_url=https%3A%2F%2Faccounts.spotify.com%2Fen%2Fstatus%3Fflow_ctx%3Dc9d573b3-b1da-4c29-88c4-e0f8e9c25d63%3A1696803002')
+        time.sleep(random.uniform(2.2, 2.8))
         email = driver.find_element(By.ID, "email")
         email.send_keys(credentials['email'])
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.5, 1))
         try:
             re_email = driver.find_element(By.ID, "confirm")
 
             re_email.send_keys(credentials['email'])
         except Exception:
             print("Re-email Passed...")
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.8, 1.1))
         password = driver.find_element(By.ID, "password")
         password.send_keys(credentials['password'])
-        time.sleep(0.7)
+        time.sleep(random.uniform(0.7, 1.036))
         username = driver.find_element(By.XPATH, '//*[@id="displayname"]')
         username.send_keys(credentials['username'])
-        time.sleep(0.9)
+        time.sleep(random.uniform(0.9, 1.569))
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(0.8)
+        time.sleep(random.uniform(0.8, 1.3))
         drop_months = driver.find_element(By.XPATH,
                                           '//*[@id="month"]')
         select_months = Select(drop_months)
         select_months.select_by_visible_text("Июнь" or "June")
-        time.sleep(1)
+        time.sleep(random.uniform(1, 1.4))
         day = driver.find_element(By.XPATH, '//*[@id="day"]')
         day.send_keys("22")
-        time.sleep(0.6)
+        time.sleep(random.uniform(0.6, 1.2))
         year = driver.find_element(By.XPATH, '//*[@id="year"]')
         year.send_keys("1995")
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.56, 0.96))
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(0.68)
+        time.sleep(random.uniform(1, 1.5))
         female = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/fieldset/div/div[2]/label/span[1]')
         female.click()
-        time.sleep(0.2)
+        time.sleep(random.uniform(0.6, 1.2))
         agreements = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div/label/span[1]")
         agreements.click()
-        time.sleep(0.36)
+        time.sleep(random.uniform(0.36, 0.88))
         login = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/div[6]/div/button/span[1]')
         login.click()
-        return credentials
+        time.sleep(random.uniform(8, 9.3))
+        driver.close()
 
     def run(self):
-        for i in range(2):
-            credentials = self.creator()
-            time.sleep(2)
-            with open(f'users/accounts.json', 'w') as savefile:
-                # Save the entire account_list to the JSON file
-                json.dump(self.account_list, savefile, indent=4)
-            print(f'{len(self.account_list)} accounts created')
-        print(f'___Accounts created successfully___')
-
+        while True:
+            start_time = time.time()
+            for _ in range(3):
+                self.creator()
+                time.sleep(2)
+                save_data = postgres_connect.create_table_and_insert_data(self.account_list)
+                print(save_data)
+                time.sleep(random.uniform(2.2, 2.8))
+            print(f'___Accounts created successfully___')
+            end_time = time.time()
+            exc_time = end_time - start_time
+            print(f'Accounts create within {exc_time}')
+            postgres_connect.remove_duplicates()
+            time.sleep(600)
 
 if __name__ == "__main__":
-    main = Main()
-    main.run()
+    create_accounts = Main()
+    create_accounts.run()

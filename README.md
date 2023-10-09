@@ -10,25 +10,16 @@ Python 3.8 or upper
 
 ## Installation 
 
-- create `users` directory for storing generated accounts data 
+- create `PostgresSQL` db and input your db credentials into `/core/postgres_connect.py` 
 - install necessary libraries with command `pip install -r requirements.txt`  
-- run `uvicorn` server with using `uvicorn main:app --reload`
+- Enter your playlist url into `stream.py`
 
-## Endpoints
+
 
 ### Create Account
-`api/create_account`
-
-Currently there are available  only `create_account` endpoint, which generate `spotify` accounts with fake email address  
-
-
-
-
-
-![Screenshot (9)](https://user-images.githubusercontent.com/92037197/235632304-22bfd821-ffa0-4902-85be-f636dd030844.png)
+Run `python create_account.py`. It will create 2 accounts per 10 minutes
 
 
 ### Streaming 
 
-For run `Spotify` streaming simply run `stream.py` , but don't forget to generate random account and put your playlist json 
-in the main directory 
+For run `Spotify` streaming simply run `stream.py` 

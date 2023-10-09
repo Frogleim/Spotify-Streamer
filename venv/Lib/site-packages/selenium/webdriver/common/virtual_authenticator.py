@@ -16,117 +16,78 @@
 # under the License.
 
 import functools
-
-from base64 import urlsafe_b64encode, urlsafe_b64decode
-from enum import Enum
 import typing
+from base64 import urlsafe_b64decode
+from base64 import urlsafe_b64encode
+from enum import Enum
 
 
-class Protocol(Enum):
-    """
-    Protocol to communicate with the authenticator.
-    """
-    CTAP2 = "ctap2"
-    U2F = "ctap1/u2f"
+class Protocol(str, Enum):
+    """Protocol to communicate with the authenticator."""
+
+    CTAP2: str = "ctap2"
+    U2F: str = "ctap1/u2f"
 
 
-class Transport(Enum):
-    """
-    Transport method to communicate with the authenticator.
-    """
-    BLE = "ble"
-    USB = "usb"
-    NFC = "nfc"
-    INTERNAL = "internal"
+class Transport(str, Enum):
+    """Transport method to communicate with the authenticator."""
+
+    BLE: str = "ble"
+    USB: str = "usb"
+    NFC: str = "nfc"
+    INTERNAL: str = "internal"
 
 
 class VirtualAuthenticatorOptions:
-
+    # These are so unnecessary but are now public API so we can't remove them without deprecating first.
+    # These should not be class level state in here.
     Protocol = Protocol
     Transport = Transport
 
-    def __init__(self) -> None:
-        """Constructor. Initialize VirtualAuthenticatorOptions object.
+    def __init__(
+        self,
+        protocol: str = Protocol.CTAP2,
+        transport: str = Transport.USB,
+        has_resident_key: bool = False,
+        has_user_verification: bool = False,
+        is_user_consenting: bool = True,
+        is_user_verified: bool = False,
+    ) -> None:
+        """Constructor.
 
-          :default:
-            - protocol: Protocol.CTAP2
-            - transport: Transport.USB
-            - hasResidentKey: False
-            - hasUserVerification: False
-            - isUserConsenting: True
-            - isUserVerified: False
+        Initialize VirtualAuthenticatorOptions object.
         """
 
-        self._protocol: Protocol = Protocol.CTAP2
-        self._transport: Transport = Transport.USB
-        self._has_resident_key: bool = False
-        self._has_user_verification: bool = False
-        self._is_user_consenting: bool = True
-        self._is_user_verified: bool = False
+        self.protocol: str = protocol
+        self.transport: str = transport
+        self.has_resident_key: bool = has_resident_key
+        self.has_user_verification: bool = has_user_verification
+        self.is_user_consenting: bool = is_user_consenting
+        self.is_user_verified: bool = is_user_verified
 
-    @property
-    def protocol(self) -> str:
-        return self._protocol.value
-
-    @protocol.setter
-    def protocol(self, protocol: Protocol) -> None:
-        self._protocol = protocol
-
-    @property
-    def transport(self) -> str:
-        return self._transport.value
-
-    @transport.setter
-    def transport(self, transport: Transport) -> None:
-        self._transport = transport
-
-    @property
-    def has_resident_key(self) -> bool:
-        return self._has_resident_key
-
-    @has_resident_key.setter
-    def has_resident_key(self, value: bool) -> None:
-        self._has_resident_key = value
-
-    @property
-    def has_user_verification(self) -> bool:
-        return self._has_user_verification
-
-    @has_user_verification.setter
-    def has_user_verification(self, value: bool) -> None:
-        self._has_user_verification = value
-
-    @property
-    def is_user_consenting(self) -> bool:
-        return self._is_user_consenting
-
-    @is_user_consenting.setter
-    def is_user_consenting(self, value: bool) -> None:
-        self._is_user_consenting = value
-
-    @property
-    def is_user_verified(self) -> bool:
-        return self._is_user_verified
-
-    @is_user_verified.setter
-    def is_user_verified(self, value: bool) -> None:
-        self._is_user_verified = value
-
-    def to_dict(self) -> typing.Dict[str, typing.Any]:
+    def to_dict(self) -> typing.Dict[str, typing.Union[str, bool]]:
         return {
             "protocol": self.protocol,
             "transport": self.transport,
             "hasResidentKey": self.has_resident_key,
             "hasUserVerification": self.has_user_verification,
             "isUserConsenting": self.is_user_consenting,
-            "isUserVerified": self.is_user_verified
+            "isUserVerified": self.is_user_verified,
         }
 
 
 class Credential:
-    def __init__(self, credential_id: bytes, is_resident_credential: bool, rp_id: str, user_handle: typing.Optional[bytes], private_key: bytes, sign_count: int):
+    def __init__(
+        self,
+        credential_id: bytes,
+        is_resident_credential: bool,
+        rp_id: str,
+        user_handle: typing.Optional[bytes],
+        private_key: bytes,
+        sign_count: int,
+    ):
         """Constructor. A credential stored in a virtual authenticator.
-        https://w3c.github.io/webauthn/#credential-parameters
+        https://w3c.github.io/webauthn/#credential-parameters.
 
         :Args:
             - credential_id (bytes): Unique base64 encoded string.
@@ -170,59 +131,60 @@ class Credential:
         return self._sign_count
 
     @classmethod
-    def create_non_resident_credential(cls, id: bytes, rp_id: str, private_key: bytes, sign_count: int) -> 'Credential':
+    def create_non_resident_credential(cls, id: bytes, rp_id: str, private_key: bytes, sign_count: int) -> "Credential":
         """Creates a non-resident (i.e. stateless) credential.
 
-              :Args:
-                - id (bytes): Unique base64 encoded string.
-                - rp_id (str): Relying party identifier.
-                - private_key (bytes): Base64 encoded PKCS
-                - sign_count (int): intital value for a signature counter.
+        :Args:
+          - id (bytes): Unique base64 encoded string.
+          - rp_id (str): Relying party identifier.
+          - private_key (bytes): Base64 encoded PKCS
+          - sign_count (int): intital value for a signature counter.
 
-              :Returns:
-                - Credential: A non-resident credential.
+        :Returns:
+          - Credential: A non-resident credential.
         """
         return cls(id, False, rp_id, None, private_key, sign_count)
 
     @classmethod
-    def create_resident_credential(cls, id: bytes, rp_id: str, user_handle: typing.Optional[bytes], private_key: bytes, sign_count: int) -> 'Credential':
+    def create_resident_credential(
+        cls, id: bytes, rp_id: str, user_handle: typing.Optional[bytes], private_key: bytes, sign_count: int
+    ) -> "Credential":
         """Creates a resident (i.e. stateful) credential.
 
-              :Args:
-                - id (bytes): Unique base64 encoded string.
-                - rp_id (str): Relying party identifier.
-                - user_handle (bytes): userHandle associated to the credential. Must be Base64 encoded string.
-                - private_key (bytes): Base64 encoded PKCS
-                - sign_count (int): intital value for a signature counter.
+        :Args:
+          - id (bytes): Unique base64 encoded string.
+          - rp_id (str): Relying party identifier.
+          - user_handle (bytes): userHandle associated to the credential. Must be Base64 encoded string.
+          - private_key (bytes): Base64 encoded PKCS
+          - sign_count (int): intital value for a signature counter.
 
-              :returns:
-                - Credential: A resident credential.
+        :returns:
+          - Credential: A resident credential.
         """
         return cls(id, True, rp_id, user_handle, private_key, sign_count)
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         credential_data = {
-            'credentialId': self.id,
-            'isResidentCredential': self._is_resident_credential,
-            'rpId': self.rp_id,
-            'privateKey': self.private_key,
-            'signCount': self.sign_count,
+            "credentialId": self.id,
+            "isResidentCredential": self._is_resident_credential,
+            "rpId": self.rp_id,
+            "privateKey": self.private_key,
+            "signCount": self.sign_count,
         }
 
         if self.user_handle:
-            credential_data['userHandle'] = self.user_handle
+            credential_data["userHandle"] = self.user_handle
 
         return credential_data
 
     @classmethod
-    def from_dict(cls, data: typing.Dict[str, typing.Any]) -> 'Credential':
+    def from_dict(cls, data: typing.Dict[str, typing.Any]) -> "Credential":
         _id = urlsafe_b64decode(f"{data['credentialId']}==")
-        is_resident_credential = bool(data['isResidentCredential'])
-        rp_id = data.get('rpId', None)
+        is_resident_credential = bool(data["isResidentCredential"])
+        rp_id = data.get("rpId", None)
         private_key = urlsafe_b64decode(f"{data['privateKey']}==")
-        sign_count = int(data['signCount'])
-        user_handle = urlsafe_b64decode(f"{data['userHandle']}==") \
-            if data.get('userHandle', None) else None
+        sign_count = int(data["signCount"])
+        user_handle = urlsafe_b64decode(f"{data['userHandle']}==") if data.get("userHandle", None) else None
 
         return cls(_id, is_resident_credential, rp_id, user_handle, private_key, sign_count)
 
@@ -232,26 +194,29 @@ class Credential:
 
 
 def required_chromium_based_browser(func):
-    """
-    A decorator to ensure that the client used is a chromium based browser.
-    """
+    """A decorator to ensure that the client used is a chromium based
+    browser."""
+
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-        assert self.caps["browserName"].lower() not in ["firefox", "safari"], "This only currently works in Chromium based browsers"
+        assert self.caps["browserName"].lower() not in [
+            "firefox",
+            "safari",
+        ], "This only currently works in Chromium based browsers"
         return func(self, *args, **kwargs)
+
     return wrapper
 
 
 def required_virtual_authenticator(func):
-    """
-    A decorator to ensure that the function is called with a virtual authenticator.
-    """
+    """A decorator to ensure that the function is called with a virtual
+    authenticator."""
+
     @functools.wraps(func)
     @required_chromium_based_browser
     def wrapper(self, *args, **kwargs):
         if not self.virtual_authenticator_id:
-            raise ValueError(
-                "This function requires a virtual authenticator to be set."
-            )
+            raise ValueError("This function requires a virtual authenticator to be set.")
         return func(self, *args, **kwargs)
+
     return wrapper
