@@ -1,11 +1,7 @@
 import time
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 from pynput.keyboard import Key, Controller
-from selenium.webdriver.common.proxy import Proxy, ProxyType
 import undetected_chromedriver as uc
-import json
 from core import postgres_connect
 import random
 
@@ -50,7 +46,7 @@ def start_streaming(email, password):
 
 def run():
     accounts_data = postgres_connect.fetch_accounts_from_postgresql()
-    for accounts in accounts_data[13:]:
+    for accounts in accounts_data:
         email, password = accounts
         start_streaming(email, password)
         time.sleep(random.randint(6, 12))

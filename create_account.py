@@ -1,4 +1,3 @@
-import json
 import random
 import names
 import os
@@ -13,7 +12,7 @@ import signUp_Alternative
 script_version = "1.0"
 script_title = "Spotify Account Creator and Streamer By Frogleim"
 script_info = f'''
-	 ..: {script_title} :..
+	  ..: {script_title} :..
 
  [!] ABOUT SCRIPT:
  [-] With this script, you can register on Spotify.com
@@ -26,20 +25,21 @@ script_info = f'''
 '''
 
 
+def set_title(title_name: str):
+    os.system("title {0}".format(title_name))
+
+
+def clear(text):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(text)
+
+
 class Main:
 
-    def clear(self, text):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(text)
-
-    def settitle(self, title_name: str):
-        os.system("title {0}".format(title_name))
-
     def __init__(self):
-        self.credentails_data = None
         self.alphabet = string.ascii_letters + string.digits
-        self.settitle(script_title)
-        self.clear(script_info)
+        set_title(script_title)
+        clear(script_info)
         self.password = '077108803GBH'
         self.birth_year = random.randint(1990, 2002)
         self.birth_month = random.randint(1, 12)
@@ -47,15 +47,13 @@ class Main:
         self.gender = random.choice(['male', 'female'])
         self.account_list = []
 
-    def gen_credentails_method(self):
+    def gen_credentials_method(self):
         credentials = {'gender': self.gender, 'birth_year': self.birth_year, 'birth_month': self.birth_month,
                        'birth_day': self.birth_day, 'password': self.password}
         username = string.ascii_letters + string.digits
         username = ''.join(random.choice(username) for i in range(random.randint(7, 11)))
         credentials['username'] = username
         credentials['email'] = names.get_full_name().replace(' ', '').lower() + f'{random.randint(100, 200)}@gmail.com'
-
-        # Append the generated credentials to the account_list
         self.account_list.append(credentials)
 
         print(f'Email: {credentials["email"]}')
@@ -64,11 +62,13 @@ class Main:
         return credentials
 
     def creator(self):
-        credentials = self.gen_credentails_method()
+        credentials = self.gen_credentials_method()
 
         driver = uc.Chrome()
 
-        driver.get('https://www.spotify.com/us/signup?flow_id=c9d573b3-b1da-4c29-88c4-e0f8e9c25d63%3A1696803002&forward_url=https%3A%2F%2Faccounts.spotify.com%2Fen%2Fstatus%3Fflow_ctx%3Dc9d573b3-b1da-4c29-88c4-e0f8e9c25d63%3A1696803002')
+        driver.get('https://www.spotify.com/us/signup?flow_id=c9d573b3-b1da-4c29-88c4-e0f8e9c25d63%3A1696803002'
+                   '&forward_url=https%3A%2F%2Faccounts.spotify.com%2Fen%2Fstatus%3Fflow_ctx%3Dc9d573b3-b1da-4c29'
+                   '-88c4-e0f8e9c25d63%3A1696803002')
         try:
             time.sleep(random.uniform(2.2, 2.8))
             email = driver.find_element(By.ID, "email")
@@ -77,7 +77,7 @@ class Main:
             re_email = driver.find_element(By.ID, "confirm")
 
             re_email.send_keys(credentials['email'])
-       
+
             time.sleep(random.uniform(0.8, 1.1))
             password = driver.find_element(By.ID, "password")
             password.send_keys(credentials['password'])
@@ -88,9 +88,9 @@ class Main:
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(random.uniform(0.8, 1.3))
             drop_months = driver.find_element(By.XPATH,
-                                            '//*[@id="month"]')
+                                              '//*[@id="month"]')
             select_months = Select(drop_months)
-            select_months.select_by_visible_text("Июнь" or "June")
+            select_months.select_by_visible_text("June")
             time.sleep(random.uniform(1, 1.4))
             day = driver.find_element(By.XPATH, '//*[@id="day"]')
             day.send_keys("22")
@@ -100,7 +100,8 @@ class Main:
             time.sleep(random.uniform(0.56, 0.96))
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(random.uniform(1, 1.5))
-            female = driver.find_element(By.XPATH, '/html/body/div[1]/main/div/div/form/fieldset/div/div[2]/label/span[1]')
+            female = driver.find_element(By.XPATH,
+                                         '/html/body/div[1]/main/div/div/form/fieldset/div/div[2]/label/span[1]')
             female.click()
             time.sleep(random.uniform(0.6, 1.2))
             agreements = driver.find_element(By.XPATH, "/html/body/div[1]/main/div/div/form/div[5]/div/label/span[1]")
@@ -134,6 +135,7 @@ class Main:
             print(f'Accounts create within {exc_time}')
             postgres_connect.remove_duplicates()
             time.sleep(600)
+
 
 if __name__ == "__main__":
     create_accounts = Main()

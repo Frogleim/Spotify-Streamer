@@ -1,4 +1,5 @@
 names
 undetected_chromedriver
-selenium
+selenium==4.12
 requests
+psycopg2==2.9.6
