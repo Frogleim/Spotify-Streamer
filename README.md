@@ -11,7 +11,9 @@ Selenium 4.12
 
 ## Installation 
 
-- create `PostgresSQL` db and input your db credentials into `/core/postgres_connect.py` 
+- Download PostgresSQL from https://www.postgresql.org/download/
+- install pgAdmin and set up admin password `0000`
+- open pgAdmin and create database and set up database name as `spotify_accounts`
 - install necessary libraries with command `pip install -r requirements.txt`  
 - Enter your playlist url into `stream.py`
 

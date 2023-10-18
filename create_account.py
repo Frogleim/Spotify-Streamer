@@ -90,7 +90,7 @@ class Main:
             drop_months = driver.find_element(By.XPATH,
                                               '//*[@id="month"]')
             select_months = Select(drop_months)
-            select_months.select_by_visible_text("June")
+            select_months.select_by_index(random.randint(0, 4))
             time.sleep(random.uniform(1, 1.4))
             day = driver.find_element(By.XPATH, '//*[@id="day"]')
             day.send_keys("22")
