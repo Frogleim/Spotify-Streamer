@@ -36,7 +36,7 @@ class SignUP:
         drop_month = self.driver.find_element(By.XPATH, "/html/body/div[1]/main/div/main/section/div/div/section/form"
                                                         "/div[1]/section/div[3]/div[2]/div[2]/div/div/select")
         select_month = Select(drop_month)
-        select_month.select_by_visible_text("June")
+        select_month.select_by_index(random.randint(0, 4))
         day = self.driver.find_element(By.XPATH, "/html/body/div[1]/main/div/main/section/div/div/section/form/div["
                                                  "1]/section/div[3]/div[2]/div[2]/div[1]/input[1]")
         day.send_keys(random.randint(20, 30))
