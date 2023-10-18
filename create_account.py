@@ -64,7 +64,7 @@ class Main:
     def creator(self):
         credentials = self.gen_credentials_method()
 
-        driver = uc.Chrome()
+        driver = uc.Chrome(v)
 
         driver.get('https://www.spotify.com/us/signup?flow_id=c9d573b3-b1da-4c29-88c4-e0f8e9c25d63%3A1696803002'
                    '&forward_url=https%3A%2F%2Faccounts.spotify.com%2Fen%2Fstatus%3Fflow_ctx%3Dc9d573b3-b1da-4c29'

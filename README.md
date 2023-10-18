@@ -5,7 +5,8 @@ Spotify streamer for 24/7 streaming also included accounts generation
 ## Requirements 
 
 ```sh
-Python 3.8 or upper
+Python 3.10.9
+Selenium 4.12
 ```
 
 ## Installation 
